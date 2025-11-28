@@ -5,7 +5,7 @@ from timm.models.layers import trunc_normal_, DropPath
 from timm.models.registry import register_model
 from layernorm import LayerNorm
 
-class ConvNext(nn.Module):
+class ConvNextBlock(nn.Module):
         
     def __init__(self, dim, drop_path=0., layer_scale_init_value=1e-6):
 
