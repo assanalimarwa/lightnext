@@ -21,7 +21,7 @@ model = convnext_tiny()
 
 print(model)
 
-
+print(torch.cuda.is_available())
 
 
 
