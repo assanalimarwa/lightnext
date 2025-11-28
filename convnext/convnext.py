@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from timm.models.layers import trunc_normal_, DropPath
 from timm.models.registry import register_model
 from layernorm import LayerNorm
-from convnextblock import ConvNextBlock
+from convnext.convnextblock import ConvNextBlock
 
 
 class ConvNeXtModel(nn.Module):
