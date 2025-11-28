@@ -5,7 +5,9 @@ from convnextblock import ConvNext
 
 img = torch.rand(1, 3, 224, 224)
 
-out = ConvNext(img)
+model = ConvNext(dim = 96)
+
+out = model(img)
 
 print(out)
 
