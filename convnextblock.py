@@ -7,8 +7,7 @@ from layernorm import LayerNorm
 class ConvNext(nn.Module):
     def __init__(self, dim, drop_path = 0., layer_scale_init_value= 1e-6):
         super().__init__()
-
-        self.depthwise = nn.Conv2d(dim, dim, kernel_size = 7, padding = 3, groups = dim)
+        self.depthwise = nn.Conv2d(dim, dim, kernel_size=7, padding=3, groups=dim)
         self.ln = LayerNorm(dim, eps = 1e-6)
         self.pwconv1 = nn.Linear(dim, 4 * dim)
         self.gelu = nn.GELU()
