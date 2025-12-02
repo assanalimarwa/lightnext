@@ -14,7 +14,7 @@ from torch.utils.data import Dataset
 from skimage import io
 import cv2
 class BaseDataSets(Dataset):
-    def __init__(self, base_dir=None, split='train', list_dir=None, transform=None):
+    def __init__(self, base_dir='/Users/assanali/Downloads/LighNextv2/datasets/ACDC', split='train', list_dir=None, transform=None):
         self._base_dir = base_dir
         self.sample_list = []
         self.split = split
