@@ -23,11 +23,11 @@ def trainer_acdc(model):
     batch_size = 4
     # max_iterations = 
 
-    snapshot_path = '/Users/assanali/Downloads/LighNextv2/snapshot'
+    snapshot_path = '/home/user/lightnext/snapshot/'
 
-    db_train = BaseDataSets(base_dir='/Users/assanali/Downloads/LighNextv2/datasets/ACDC', split="train", transform=transforms.Compose([
+    db_train = BaseDataSets(base_dir='/home/user/lightnext/datasets/ACDC', split="train", transform=transforms.Compose([
         RandomGenerator([224, 224])]))
-    db_val = BaseDataSets(base_dir='/Users/assanali/Downloads/LighNextv2/datasets/ACDC', split="val")
+    db_val = BaseDataSets(base_dir='/home/user/lightnext/datasets/ACDC', split="val")
     def worker_init_fn(worker_id):
         random.seed(1234 + worker_id)
     trainloader = DataLoader(db_train, batch_size=batch_size, shuffle=True,
@@ -43,7 +43,7 @@ def trainer_acdc(model):
     writer = SummaryWriter(snapshot_path + '/log')
     logging.info("{} iterations per epoch".format(len(trainloader)))
     logging.info("{} val iterations per epoch".format(len(valloader)))
-    logging.info("{} test iterations per epoch".format(len(testloader)))
+    # logging.info("{} test iterations per epoch".format(len(testloader)))
 
     iter_num = 0
     max_epoch = 100
