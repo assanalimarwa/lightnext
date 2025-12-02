@@ -16,7 +16,7 @@ from utils import DiceLoss
 from torchvision import transforms
 from utils import DiceLoss, test_single_volume, calculate_metric_percase
 
-def trainer_acdc(args, model):
+def trainer_acdc(model):
     from datasets.dataset_acdc import BaseDataSets, RandomGenerator
     base_lr = 0.01
     num_classes = 4
@@ -29,7 +29,7 @@ def trainer_acdc(args, model):
         RandomGenerator([224, 224])]))
     db_val = BaseDataSets(base_dir='/Users/assanali/Downloads/LighNextv2/datasets/ACDC', split="val")
     def worker_init_fn(worker_id):
-        random.seed(args.seed + worker_id)
+        random.seed(1234 + worker_id)
     trainloader = DataLoader(db_train, batch_size=batch_size, shuffle=True,
                              num_workers=8, pin_memory=True, worker_init_fn=worker_init_fn)
     valloader = DataLoader(db_val, batch_size=1, shuffle=False,
