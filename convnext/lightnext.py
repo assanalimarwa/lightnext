@@ -10,7 +10,7 @@ from convnext.convnextblock import ConvNextBlock
 
 
 
-class ConvNeXtUNet(nn.Module):
+class LightNext(nn.Module):
     def __init__(self, in_chans=1, num_classes=4, 
                  depths=[3, 3, 9, 3], dims=[96, 192, 384, 768], 
                  drop_path_rate=0., layer_scale_init_value=1e-6):
