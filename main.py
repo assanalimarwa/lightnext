@@ -52,6 +52,7 @@ print(first_sample.keys())  # dict keys: image, label, idx, case_name
 print("Image shape:", first_sample['image'].shape)
 print("Label shape:", first_sample['label'].shape)
 
+#new
 
 
 
