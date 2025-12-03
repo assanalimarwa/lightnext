@@ -1,7 +1,7 @@
 import torch 
 import torch.nn as nn 
 from convnext.convnextblock import ConvNextBlock
-from convnext.convnext import ConvNeXtModel
+from convnext.lightnext import LightNext
 from datasets.trainer import trainer_acdc
 from datasets.dataset_acdc import BaseDataSets, RandomGenerator
 from torch.utils.data import DataLoader
