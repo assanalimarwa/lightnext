@@ -25,7 +25,7 @@ def trainer_acdc(model):
 
     if torch.cuda.is_available():
     # If available, set the device to 'cuda' (GPU)
-        cuda = torch.cuda("cuda")
+        device = torch.device("cuda")
 
     snapshot_path = '/home/user/lightnext/snapshot/'
 
@@ -38,7 +38,7 @@ def trainer_acdc(model):
                              num_workers=8, pin_memory=True, worker_init_fn=worker_init_fn)
     valloader = DataLoader(db_val, batch_size=1, shuffle=False,
                            num_workers=1)
-    model.to(cuda)
+    model.to(device)
     model.train()
     optimizer = optim.SGD(model.parameters(), lr=base_lr,
                           momentum=0.9, weight_decay=0.0001)
@@ -58,7 +58,7 @@ def trainer_acdc(model):
         for i_batch, sampled_batch in enumerate(trainloader):
             print('Dianasolnce')
             volume_batch, label_batch = sampled_batch['image'], sampled_batch['label']
-            volume_batch, label_batch = volume_batch.to(cuda), label_batch.to(cuda)
+            volume_batch, label_batch = volume_batch.to(device), label_batch.to(device)
             outputs = model(volume_batch)
             loss_ce = ce_loss(outputs, label_batch[:].long())
             loss_dice = dice_loss(outputs, label_batch, softmax=True)
