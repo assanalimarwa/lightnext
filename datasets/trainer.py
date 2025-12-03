@@ -23,6 +23,10 @@ def trainer_acdc(model):
     batch_size = 4
     # max_iterations = 
 
+    if torch.cuda.is_available():
+    # If available, set the device to 'cuda' (GPU)
+        cuda = torch.cuda("cuda")
+
     snapshot_path = '/home/user/lightnext/snapshot/'
 
     db_train = BaseDataSets(base_dir='/home/user/lightnext/datasets/ACDC', split="train", transform=transforms.Compose([
@@ -34,6 +38,7 @@ def trainer_acdc(model):
                              num_workers=8, pin_memory=True, worker_init_fn=worker_init_fn)
     valloader = DataLoader(db_val, batch_size=1, shuffle=False,
                            num_workers=1)
+    model.cuda()
     model.train()
     optimizer = optim.SGD(model.parameters(), lr=base_lr,
                           momentum=0.9, weight_decay=0.0001)
