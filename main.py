@@ -16,7 +16,6 @@ from torchvision import transforms
 
 model = LightNext()
 
-model
 
 # out = model(img)
 
