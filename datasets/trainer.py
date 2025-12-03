@@ -22,7 +22,7 @@ def trainer_acdc(model):
     num_classes = 4
     batch_size = 4
     img_size = 224
-    # max_iterations = 
+    max_iterations = max_epoch * 1500 // batch_size
 
     if torch.cuda.is_available():
     # If available, set the device to 'cuda' (GPU)
