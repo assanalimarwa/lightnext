@@ -14,7 +14,7 @@ from torchvision import transforms
 
 # img = torch.rand(1, 96, 224, 224)
 
-model = LightNext()
+# model = LightNext()
 
 
 # out = model(img)
@@ -38,9 +38,9 @@ model = LightNext()
 # trainloader = DataLoader(db_train, batch_size=4, shuffle=True,
 #                              num_workers=8, pin_memory=True)
 
-train = trainer_acdc(model)
+# train = trainer_acdc(model)
 
-train()
+# train()
 
 # batch = next(iter(trainloader))  # batch is a list of dicts
 # print(len(batch))  # batch size
@@ -60,3 +60,11 @@ train()
 
 
 
+# test.py
+from models.your_model import ConvNeXtUNet
+from inference import inference_acdc
+
+model = ConvNeXtUNet(in_chans=1, num_classes=4)
+model_path = '/home/user/lightnext/snapshot/best_model.pth'
+
+dice, hd95 = inference_acdc(model, model_path)

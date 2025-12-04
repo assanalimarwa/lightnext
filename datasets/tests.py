@@ -80,10 +80,10 @@ def inference_acdc(model, model_path='best_model.pth'):
 
 # Usage:
 if __name__ == "__main__":
-    from your_model_file import ConvNeXtUNet  # Import your model
+    from convnext.lightnext import LightNext  # Import your model
     
     # Initialize model with same parameters as training
-    model = ConvNeXtUNet(
+    model = LightNext(
         in_chans=1, 
         num_classes=4, 
         depths=[3, 3, 9, 3], 
@@ -95,3 +95,6 @@ if __name__ == "__main__":
     dice_score, hd95_score = inference_acdc(model, model_path)
     
     print(f"Final Results - Dice: {dice_score:.4f}, HD95: {hd95_score:.4f}")
+
+
+    
