@@ -3,7 +3,11 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-from utils import test_single_volume
+from convnext.lightnext import LightNext
+from utils.utilities import test_single_volume
+
+
+
 
 def inference_acdc(model, model_path='best_model.pth'):
     from datasets.dataset_acdc import BaseDataSets
@@ -79,22 +83,20 @@ def inference_acdc(model, model_path='best_model.pth'):
 
 
 # Usage:
-if __name__ == "__main__":
-    from convnext.lightnext import LightNext  # Import your model
+
     
     # Initialize model with same parameters as training
-    model = LightNext(
-        in_chans=1, 
-        num_classes=4, 
-        depths=[3, 3, 9, 3], 
-        dims=[96, 192, 384, 768]
-    )
-    
-    # Run inference
-    model_path = '/home/user/lightnext/snapshot/best_model.pth'
-    dice_score, hd95_score = inference_acdc(model, model_path)
-    
-    print(f"Final Results - Dice: {dice_score:.4f}, HD95: {hd95_score:.4f}")
+model = LightNext(
+    in_chans=1, 
+    num_classes=4, 
+    depths=[3, 3, 9, 3], 
+    dims=[96, 192, 384, 768]
+)
+
+# Run inference
+model_path = '/home/user/lightnext/snapshot/best_model.pth'
+dice_score, hd95_score = inference_acdc(model, model_path)
+
+print(f"Final Results - Dice: {dice_score:.4f}, HD95: {hd95_score:.4f}")
 
 
-    

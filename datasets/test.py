@@ -14,7 +14,7 @@ try:
     from datasets.dataset_acdc import BaseDataSets as ACDC_dataset
 except:
     pass
-from utils import test_single_volume
+from utils.utilities import test_single_volume
 from networks.vit_seg_modeling import VisionTransformer as ViT_seg
 from networks.vit_seg_modeling import CONFIGS as CONFIGS_ViT_seg
 

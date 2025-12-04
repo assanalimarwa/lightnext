@@ -12,9 +12,9 @@ from tensorboardX import SummaryWriter
 from torch.nn.modules.loss import CrossEntropyLoss
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-from utils import DiceLoss
+from utils.utilities import DiceLoss
 from torchvision import transforms
-from utils import DiceLoss, test_single_volume, calculate_metric_percase
+from utils.utilities import DiceLoss, test_single_volume, calculate_metric_percase
 
 def trainer_acdc(model):
     from datasets.dataset_acdc import BaseDataSets, RandomGenerator
