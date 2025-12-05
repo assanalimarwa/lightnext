@@ -64,4 +64,4 @@ def quick_visualize(model, model_path, num_samples=5):
 
 
 model = LightNext(in_chans=1, num_classes=4)
-quick_visualize(model, '/home/user/lightnext/snapshot/best_model.pth', num_samples=10)
+quick_visualize(model, '/home/user/lightnext/snapshot/best_model.pth')
