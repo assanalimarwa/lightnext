@@ -1,7 +1,7 @@
 import torch 
 import torch.nn as nn 
 from convnext.convnextblock import ConvNextBlock
-from convnext.lightnext import LightNext
+from convnext.lightnextv1 import LightNextv1
 from datasets.trainer import trainer_acdc
 from datasets.dataset_acdc import BaseDataSets, RandomGenerator
 from torch.utils.data import DataLoader
@@ -12,9 +12,10 @@ from torchvision import transforms
 
 
 
+
 # img = torch.rand(1, 96, 224, 224)
 
-# model = LightNext()
+model = LightNextv1()
 
 
 # out = model(img)
@@ -38,7 +39,7 @@ from torchvision import transforms
 # trainloader = DataLoader(db_train, batch_size=4, shuffle=True,
 #                              num_workers=8, pin_memory=True)
 
-# train = trainer_acdc(model)
+train = trainer_acdc(model)
 
 # train()
 
@@ -60,11 +61,8 @@ from torchvision import transforms
 
 
 
-# test.py
-from models.your_model import ConvNeXtUNet
-from inference import inference_acdc
 
-model = ConvNeXtUNet(in_chans=1, num_classes=4)
-model_path = '/home/user/lightnext/snapshot/best_model.pth'
 
-dice, hd95 = inference_acdc(model, model_path)
+
+
+
