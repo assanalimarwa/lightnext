@@ -3,7 +3,7 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-from utils import test_single_volume
+from utils.utilities import test_single_volume
 import matplotlib.pyplot as plt
 import os
 
@@ -166,10 +166,10 @@ def inference_with_visualization(model, model_path='best_model.pth'):
 
 # Standalone script to run
 if __name__ == "__main__":
-    from models.convnext_unet import ConvNeXtUNet  # Adjust import based on your file
+    from convnext.lightnext import LightNext  # Adjust import based on your file
     
     # Initialize model
-    model = ConvNeXtUNet(
+    model = LightNext(
         in_chans=1, 
         num_classes=4, 
         depths=[3, 3, 9, 3], 
