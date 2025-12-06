@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 from convnext.lightnext import LightNext
 from utils.utilities import test_single_volume
+from convnext.lightnextv1 import LightNextv1
 
 
 
@@ -86,7 +87,7 @@ def inference_acdc(model, model_path='best_model.pth'):
 
     
     # Initialize model with same parameters as training
-model = LightNext(
+model = LightNextv1(
     in_chans=1, 
     num_classes=4, 
     depths=[3, 3, 9, 3], 
