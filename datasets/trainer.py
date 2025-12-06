@@ -18,11 +18,11 @@ from utils.utilities import DiceLoss, test_single_volume, calculate_metric_perca
 
 def trainer_acdc(model):
     from datasets.dataset_acdc import BaseDataSets, RandomGenerator
-    base_lr = 0.01
+    base_lr = 0.001
     num_classes = 4
     batch_size = 4
     img_size = 224
-    max_epoch = 100
+    max_epoch = 200
     max_iterations = max_epoch * 1500 // batch_size
 
     if torch.cuda.is_available():
