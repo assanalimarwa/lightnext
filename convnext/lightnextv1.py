@@ -80,7 +80,7 @@ class MedNeXtDownBlock(MedNeXtBlock):
         self.resample_do_res = do_res
         
         if do_res:
-            self.res_conv = conv(
+            self.res_conv_downsample = conv(
                 in_channels=in_channels,
                 out_channels=out_channels,
                 kernel_size=1,
@@ -98,11 +98,18 @@ class MedNeXtDownBlock(MedNeXtBlock):
         )
     
     def forward(self, x):
+        # Save input for residual (before downsampling)
+        x_input = x
+        
+        # Downsample
         x = self.downsample(x)
+        
+        # Apply MedNeXt block processing
         x1 = super().forward(x)
         
+        # Add residual connection if enabled
         if self.resample_do_res:
-            res = self.res_conv(x)
+            res = self.res_conv_downsample(x_input)  # Downsample the original input
             x1 = x1 + res
         
         return x1
@@ -123,7 +130,7 @@ class MedNeXtUpBlock(MedNeXtBlock):
             conv = nn.ConvTranspose3d
             
         if do_res:
-            self.res_conv = conv(
+            self.res_conv_upsample = conv(
                 in_channels=in_channels,
                 out_channels=out_channels,
                 kernel_size=1,
@@ -137,26 +144,32 @@ class MedNeXtUpBlock(MedNeXtBlock):
             kernel_size=kernel_size,
             stride=2,
             padding=kernel_size//2,
-            groups=in_channels
+            groups=in_channels,
+            output_padding=1  # Important for matching dimensions
         )
     
     def forward(self, x):
+        # Save input for residual (before upsampling)
+        x_input = x
+        
+        # Upsample
         x = self.upsample(x)
         
-        # Asymmetric padding to match shape
-        if self.dim == '2d':
-            x = torch.nn.functional.pad(x, (1, 0, 1, 0))
-        elif self.dim == '3d':
-            x = torch.nn.functional.pad(x, (1, 0, 1, 0, 1, 0))
-        
+        # Apply MedNeXt block processing
         x1 = super().forward(x)
         
+        # Add residual connection if enabled
         if self.resample_do_res:
-            res = self.res_conv(x)
-            if self.dim == '2d':
-                res = torch.nn.functional.pad(res, (1, 0, 1, 0))
-            elif self.dim == '3d':
-                res = torch.nn.functional.pad(res, (1, 0, 1, 0, 1, 0))
+            res = self.res_conv_upsample(x_input)  # Upsample the original input
+            
+            # Match dimensions if needed
+            if x1.shape != res.shape:
+                if self.dim == '2d':
+                    # Pad to match if there's still a size mismatch
+                    diff_h = x1.shape[2] - res.shape[2]
+                    diff_w = x1.shape[3] - res.shape[3]
+                    res = torch.nn.functional.pad(res, (0, diff_w, 0, diff_h))
+            
             x1 = x1 + res
         
         return x1
