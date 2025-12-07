@@ -53,7 +53,7 @@ def trainer_acdc(model):
     # logging.info("{} test iterations per epoch".format(len(testloader)))
 
     iter_num = 0
-    max_epoch = 100
+    max_epoch = 200
     best_performance = 0.0
     iterator = tqdm(range(max_epoch), ncols=70)
     for epoch_num in iterator:

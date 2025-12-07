@@ -6,8 +6,7 @@ from datasets.trainer import trainer_acdc
 from datasets.dataset_acdc import BaseDataSets, RandomGenerator
 from torch.utils.data import DataLoader
 from torchvision import transforms
-
-
+from convnext.mednext.mednext import MedNeXt
 
 
 
@@ -15,9 +14,22 @@ from torchvision import transforms
 
 # img = torch.rand(1, 96, 224, 224)
 
-model = LightNextv1()
+def create_mednextv1_base(num_input_channels, num_classes, kernel_size=3, ds=False):
+
+    return MedNeXt(
+        in_channels = num_input_channels, 
+        n_channels = 32,
+        n_classes = num_classes, 
+        exp_r=[2,3,4,4,4,4,4,3,2],       
+        kernel_size=kernel_size,         
+        deep_supervision=ds,             
+        do_res=True,                     
+        do_res_up_down = True,
+        block_counts = [2,2,2,2,2,2,2,2,2]
+    )
 
 
+model = create_mednextv1_base(1, 4)
 # out = model(img)
 
 # print(out.shape)
@@ -39,7 +51,7 @@ model = LightNextv1()
 # trainloader = DataLoader(db_train, batch_size=4, shuffle=True,
 #                              num_workers=8, pin_memory=True)
 
-train = trainer_acdc(model)
+# train = trainer_acdc(model)
 
 # train()
 
