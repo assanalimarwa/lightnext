@@ -16,13 +16,13 @@ from utils.utilities import DiceLoss
 from torchvision import transforms
 from utils.utilities import DiceLoss, test_single_volume, calculate_metric_percase
 
-def trainer_acdc(model):
+def trainer_acdc(model, model_type: str):
     from datasets.dataset_acdc import BaseDataSets, RandomGenerator
     base_lr = 0.001
     num_classes = 4
     batch_size = 4
     img_size = 224
-    max_epoch = 200
+    max_epoch = 100
     max_iterations = max_epoch * 1500 // batch_size
 
     if torch.cuda.is_available():
@@ -53,7 +53,7 @@ def trainer_acdc(model):
     # logging.info("{} test iterations per epoch".format(len(testloader)))
 
     iter_num = 0
-    max_epoch = 200
+    max_epoch = 100
     best_performance = 0.0
     iterator = tqdm(range(max_epoch), ncols=70)
     for epoch_num in iterator:
@@ -113,7 +113,7 @@ def trainer_acdc(model):
 
                 if performance > best_performance:
                     best_iteration, best_performance, best_hd95 = iter_num, performance, mean_hd95
-                    save_best = os.path.join(snapshot_path, 'best_model.pth')
+                    save_best = os.path.join(snapshot_path, 'orig_model.pth' if model_type == 'orig' else 'new_model.pth')
                     torch.save(model.state_dict(), save_best)
                     logging.info('Best model | iteration %d : mean_dice : %f mean_hd95 : %f' % (
                     iter_num, performance, mean_hd95))
