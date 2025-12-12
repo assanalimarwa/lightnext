@@ -3,31 +3,20 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class MedNeXtBlock(nn.Module):
-    def __init__(self,
-                 in_channels: int,
-                 out_channels: int,
-                 exp_r: int = 4,
-                 kernel_size: int = 7,
-                 do_res: bool = True,
-                 norm_type: str = 'group',
-                 n_groups: int or None = None,
-                 dim: str = '2d', 
-                 grn: bool = False):
+class ReparamMedNextBlock(nn.Module):
+    def __init__(self, in_channels, out_channels, exp_r, kernel_size, do_res, norm_type, n_groups, 
+                 dim, grn):
         super().__init__()
+
+
+        self.conv1 = nn.Conv2d(in_channels= in_channels, 
+                              out_channels= out_channels,
+                              kernel_size=kernel_size, 
+                              stride = 1, 
+                              padding=kernel_size //2, 
+                              groups= in_channels if n_groups is None else n_groups) 
         
-        self.do_res = do_res
-        
-        # Depthwise convolution (keeps channels same)
-        self.conv1 = nn.Conv2d(
-            in_channels=in_channels,
-            out_channels=in_channels,
-            kernel_size=kernel_size,
-            stride=1,
-            padding=kernel_size // 2,
-            groups=in_channels if n_groups is None else n_groups
-        )
-        
+
         # Normalization
         if norm_type == 'group':
             self.norm = nn.GroupNorm(
@@ -43,7 +32,7 @@ class MedNeXtBlock(nn.Module):
         # Expansion (1x1 conv)
         self.conv2 = nn.Conv2d(
             in_channels=in_channels,
-            out_channels=exp_r * in_channels,
+            out_channels=exp_r * in_channels,  # ✓ Expand from in_channels
             kernel_size=1,
             stride=1,
             padding=0
@@ -64,6 +53,7 @@ class MedNeXtBlock(nn.Module):
         # GRN parameters
         self.grn = grn
         if grn:
+
             self.grn_beta = nn.Parameter(
                 torch.zeros(1, exp_r * in_channels, 1, 1), 
                 requires_grad=True
@@ -73,7 +63,10 @@ class MedNeXtBlock(nn.Module):
                 requires_grad=True
             )
     
-    def forward(self, x, dummy_tensor=None):
+    def forward(self, x, dummy_tensor = None):
+
+
+        
         x1 = x
         
         # Depthwise conv
@@ -96,22 +89,26 @@ class MedNeXtBlock(nn.Module):
             x1 = x + x1
         
         return x1
-
-
-class MedNeXtDownBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, exp_r=4, kernel_size=7, 
-                 do_res=False, norm_type='group', dim='2d', grn=False):
-        super().__init__()
         
-        self.do_res = do_res
-        self.resample_do_res = do_res
+
+
+
+
+
+class MedNeXtDownBlock(nn.Module):  # Inherit from nn.Module, not nothing!
+    def __init__(self, in_channels, out_channels, exp_r=4, kernel_size=7, 
+                 do_res=False, norm_type='group', dim ='2d', grn=False):
+        super().__init__(in_channels, out_channels, exp_r, kernel_size, do_res= False, norm_type = norm_type, dim = dim)
+        
+        self.do_res = do_res  # This is for the MAIN residual connection
+        self.resample_do_res = do_res  # For downsampled residual
         
         # 1. Depthwise convolution with stride=2 for downsampling
         self.conv1 = nn.Conv2d(
             in_channels=in_channels,
-            out_channels=in_channels,
+            out_channels=in_channels,  # ✓ Keep same (depthwise)
             kernel_size=kernel_size,
-            stride=2,
+            stride=2,  # ✓ Downsampling
             padding=kernel_size // 2,
             groups=in_channels
         )
@@ -170,7 +167,7 @@ class MedNeXtDownBlock(nn.Module):
                 stride=2
             )
     
-    def forward(self, x, dummy_tensor=None):
+    def forward(self, x, dummy_tensor = None):
         # Save input for residual
         identity = x
         
@@ -202,19 +199,18 @@ class MedNeXtDownBlock(nn.Module):
 
 class MedNeXtUpBlock(nn.Module):
     def __init__(self, in_channels, out_channels, exp_r=4, kernel_size=7, 
-                 do_res=False, norm_type='group', dim='2d', grn=False):
-        super().__init__()
+                 do_res=False, norm_type='group', dim = '2d', grn=False):
+        super().__init__(in_channels, out_channels, exp_r, kernel_size, do_res = False, norm_type = norm_type, dim = dim, grn = grn)
         
         self.do_res = do_res
         self.resample_do_res = do_res
-        self.dim = dim
         
         # 1. Depthwise TRANSPOSED convolution for UPSAMPLING
         self.conv1 = nn.ConvTranspose2d(
             in_channels=in_channels,
             out_channels=in_channels,
             kernel_size=kernel_size,
-            stride=2,
+            stride=2,  # ✓ Upsamples by 2x
             padding=kernel_size // 2,
             groups=in_channels
         )
@@ -270,10 +266,10 @@ class MedNeXtUpBlock(nn.Module):
                 in_channels=in_channels,
                 out_channels=out_channels,
                 kernel_size=1,
-                stride=2
+                stride=2  # ✓ Upsamples by 2x
             )
     
-    def forward(self, x, dummy_tensor=None):
+    def forward(self, x, dummy_tensor = None):
         # Save original input for residual
         identity = x
         
@@ -296,31 +292,26 @@ class MedNeXtUpBlock(nn.Module):
         x = self.conv3(x)
         
         # 5. Pad to fix asymmetry from transposed conv
-        if self.dim == '2d':
-            x = F.pad(x, (1, 0, 1, 0))
-        elif self.dim == '3d':
-            x = F.pad(x, (1, 0, 1, 0, 1, 0))
+        x = F.pad(x, (1, 0, 1, 0))  # Pad right and bottom by 1
         
         # 6. Add upsampled residual (if enabled)
         if self.resample_do_res:
-            res = self.res_conv(identity)
-            if self.dim == '2d':
-                res = F.pad(res, (1, 0, 1, 0))
-            elif self.dim == '3d':
-                res = F.pad(res, (1, 0, 1, 0, 1, 0))
+            res = self.res_conv(identity)  # ✓ Use ORIGINAL input
+            res = F.pad(res, (1, 0, 1, 0))
             x = x + res
         
         return x
 
 
 class OutBlock(nn.Module):
-    def __init__(self, in_channels, n_classes, dim='2d'):
+
+    def __init__(self, in_channels, n_classes, dim):
         super().__init__()
         
         if dim == '2d':
-            conv = nn.Conv2d
+            conv = nn.ConvTranspose2d
         elif dim == '3d':
-            conv = nn.Conv3d
+            conv = nn.ConvTranspose3d
         self.conv_out = conv(in_channels, n_classes, kernel_size=1)
     
     def forward(self, x, dummy_tensor=None): 
@@ -335,20 +326,20 @@ class LayerNorm(nn.Module):
     """
     def __init__(self, normalized_shape, eps=1e-5, data_format="channels_last"):
         super().__init__()
-        self.weight = nn.Parameter(torch.ones(normalized_shape))
-        self.bias = nn.Parameter(torch.zeros(normalized_shape))
+        self.weight = nn.Parameter(torch.ones(normalized_shape))        # beta
+        self.bias = nn.Parameter(torch.zeros(normalized_shape))         # gamma
         self.eps = eps
         self.data_format = data_format
         if self.data_format not in ["channels_last", "channels_first"]:
             raise NotImplementedError 
         self.normalized_shape = (normalized_shape, )
     
-    def forward(self, x, dummy_tensor=None):
+    def forward(self, x, dummy_tensor=False):
         if self.data_format == "channels_last":
             return F.layer_norm(x, self.normalized_shape, self.weight, self.bias, self.eps)
         elif self.data_format == "channels_first":
             u = x.mean(1, keepdim=True)
             s = (x - u).pow(2).mean(1, keepdim=True)
             x = (x - u) / torch.sqrt(s + self.eps)
-            x = self.weight[:, None, None] * x + self.bias[:, None, None]
+            x = self.weight[:, None, None, None] * x + self.bias[:, None, None, None]
             return x
