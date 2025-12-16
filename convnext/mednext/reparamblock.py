@@ -15,6 +15,7 @@ class RepMedNeXtBlock(nn.Module):
         small_kernel: int = 3,
         do_res: bool = True,
         norm_type: str = 'group',
+        dim = '2d',
         grn: bool = False,
         deployed: bool = False
     ):
