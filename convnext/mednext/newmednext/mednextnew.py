@@ -2,11 +2,10 @@ import torch
 import torch.nn as nn
 import torch.utils.checkpoint as checkpoint
 
-from convnext.mednext.mednextblocknew import MedNeXtDownBlock, MedNeXtUpBlock, OutBlock
-from convnext.mednext.reparamblock import RepMedNeXtBlock
+from convnext.mednext.newmednext.mednextblocknew import MedNeXtBlock, MedNeXtDownBlock, MedNeXtUpBlock, OutBlock
 
 
-class RepMedNeXt(nn.Module):
+class MedNeXtNew(nn.Module):
     def __init__(self, 
         in_channels: int, 
         n_channels: int,
@@ -22,8 +21,7 @@ class RepMedNeXt(nn.Module):
         block_counts: list = [2,2,2,2,2,2,2,2,2],
         norm_type: str = 'group',
         dim: str = '2d',
-        grn: bool = False,
-        deployed = False
+        grn: bool = False
     ):
         super().__init__()
 
@@ -48,7 +46,7 @@ class RepMedNeXt(nn.Module):
         
         # Encoder Block 0
         self.enc_block_0 = nn.Sequential(*[
-            RepMedNeXtBlock(
+            MedNeXtBlock(
                 in_channels=n_channels,
                 out_channels=n_channels,
                 exp_r=exp_r[0],
@@ -56,8 +54,7 @@ class RepMedNeXt(nn.Module):
                 do_res=do_res,
                 norm_type=norm_type,
                 dim=dim,
-                grn=grn,
-                deployed=deployed
+                grn=grn
             ) 
             for i in range(block_counts[0])]
         ) 
@@ -75,7 +72,7 @@ class RepMedNeXt(nn.Module):
     
         # Encoder Block 1
         self.enc_block_1 = nn.Sequential(*[
-            RepMedNeXtBlock(
+            MedNeXtBlock(
                 in_channels=n_channels*2,
                 out_channels=n_channels*2,
                 exp_r=exp_r[1],
@@ -83,8 +80,7 @@ class RepMedNeXt(nn.Module):
                 do_res=do_res,
                 norm_type=norm_type,
                 dim=dim,
-                grn=grn,
-                deployed=deployed
+                grn=grn
             )
             for i in range(block_counts[1])]
         )
@@ -102,7 +98,7 @@ class RepMedNeXt(nn.Module):
 
         # Encoder Block 2
         self.enc_block_2 = nn.Sequential(*[
-            RepMedNeXtBlock(
+            MedNeXtBlock(
                 in_channels=n_channels*4,
                 out_channels=n_channels*4,
                 exp_r=exp_r[2],
@@ -110,8 +106,7 @@ class RepMedNeXt(nn.Module):
                 do_res=do_res,
                 norm_type=norm_type,
                 dim=dim,
-                grn=grn,
-                deployed=deployed
+                grn=grn
             )
             for i in range(block_counts[2])]
         )
@@ -129,7 +124,7 @@ class RepMedNeXt(nn.Module):
         
         # Encoder Block 3
         self.enc_block_3 = nn.Sequential(*[
-            RepMedNeXtBlock(
+            MedNeXtBlock(
                 in_channels=n_channels*8,
                 out_channels=n_channels*8,
                 exp_r=exp_r[3],
@@ -137,8 +132,7 @@ class RepMedNeXt(nn.Module):
                 do_res=do_res,
                 norm_type=norm_type,
                 dim=dim,
-                grn=grn,
-                deployed=deployed
+                grn=grn
             )            
             for i in range(block_counts[3])]
         )
@@ -156,7 +150,7 @@ class RepMedNeXt(nn.Module):
 
         # Bottleneck
         self.bottleneck = nn.Sequential(*[
-            RepMedNeXtBlock(
+            MedNeXtBlock(
                 in_channels=n_channels*16,
                 out_channels=n_channels*16,
                 exp_r=exp_r[4],
@@ -164,8 +158,7 @@ class RepMedNeXt(nn.Module):
                 do_res=do_res,
                 norm_type=norm_type,
                 dim=dim,
-                grn=grn,
-                deployed=deployed
+                grn=grn
             )
             for i in range(block_counts[4])]
         )
@@ -183,7 +176,7 @@ class RepMedNeXt(nn.Module):
         )
 
         self.dec_block_3 = nn.Sequential(*[
-            RepMedNeXtBlock(
+            MedNeXtBlock(
                 in_channels=n_channels*8,
                 out_channels=n_channels*8,
                 exp_r=exp_r[5],
@@ -191,8 +184,7 @@ class RepMedNeXt(nn.Module):
                 do_res=do_res,
                 norm_type=norm_type,
                 dim=dim,
-                grn=grn,
-                deployed=deployed
+                grn=grn
             )
             for i in range(block_counts[5])]
         )
@@ -210,7 +202,7 @@ class RepMedNeXt(nn.Module):
         )
 
         self.dec_block_2 = nn.Sequential(*[
-            RepMedNeXtBlock(
+            MedNeXtBlock(
                 in_channels=n_channels*4,
                 out_channels=n_channels*4,
                 exp_r=exp_r[6],
@@ -218,8 +210,7 @@ class RepMedNeXt(nn.Module):
                 do_res=do_res,
                 norm_type=norm_type,
                 dim=dim,
-                grn=grn,
-                deployed=deployed
+                grn=grn
             )
             for i in range(block_counts[6])]
         )
@@ -237,7 +228,7 @@ class RepMedNeXt(nn.Module):
         )
 
         self.dec_block_1 = nn.Sequential(*[
-            RepMedNeXtBlock(
+            MedNeXtBlock(
                 in_channels=n_channels*2,
                 out_channels=n_channels*2,
                 exp_r=exp_r[7],
@@ -245,8 +236,7 @@ class RepMedNeXt(nn.Module):
                 do_res=do_res,
                 norm_type=norm_type,
                 dim=dim,
-                grn=grn,
-                deployed=deployed
+                grn=grn
             )
             for i in range(block_counts[7])]
         )
@@ -264,7 +254,7 @@ class RepMedNeXt(nn.Module):
         )
 
         self.dec_block_0 = nn.Sequential(*[
-            RepMedNeXtBlock(
+            MedNeXtBlock(
                 in_channels=n_channels,
                 out_channels=n_channels,
                 exp_r=exp_r[8],
@@ -272,8 +262,7 @@ class RepMedNeXt(nn.Module):
                 do_res=do_res,
                 norm_type=norm_type,
                 dim=dim,
-                grn=grn,
-                deployed=deployed
+                grn=grn
             )
             for i in range(block_counts[8])]
         )
