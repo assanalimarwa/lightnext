@@ -143,6 +143,8 @@ class MedNeXtDownBlock(MedNeXtBlock):
         return x1
 
 
+
+
 class MedNeXtUpBlock(MedNeXtBlock):
 
     def __init__(self, in_channels, out_channels, exp_r=4, kernel_size=7, 
@@ -237,3 +239,7 @@ class LayerNorm(nn.Module):
             x = (x - u) / torch.sqrt(s + self.eps)
             x = self.weight[:, None, None, None] * x + self.bias[:, None, None, None]
             return x
+        
+
+
+

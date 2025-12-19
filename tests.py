@@ -6,7 +6,7 @@ from tqdm import tqdm
 from convnext.lightnext import LightNext
 from utils.utilities import test_single_volume
 from convnext.mednext.mednextorig import MedNeXt
-from convnext.mednext.mednextnew import MedNeXtNew
+from convnext.mednext.newmednext.mednextnew import MedNeXtNew
 
 
 

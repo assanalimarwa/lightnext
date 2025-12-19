@@ -7,7 +7,7 @@ from datasets.dataset_acdc import BaseDataSets, RandomGenerator
 from torch.utils.data import DataLoader
 from torchvision import transforms
 from convnext.mednext.mednextorig import MedNeXt
-from convnext.mednext.mednextnew import MedNeXtNew
+from convnext.mednext.newmednext.mednextnew import MedNeXtNew
 
 from thop import profile
 
