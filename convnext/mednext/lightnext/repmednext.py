@@ -2,9 +2,7 @@ import torch
 import torch.nn as nn
 import torch.utils.checkpoint as checkpoint
 
-from convnext.mednext.newmednext.mednextblocknew import MedNeXtDownBlock, MedNeXtUpBlock, OutBlock
-from convnext.mednext.lightnext.reparamblock import RepMedNeXtBlock
-
+from convnext.mednext.lightnext.reparamblock import RepMedNeXtBlock, MedNeXtDownBlock, MedNeXtUpBlock, LayerNorm, OutBlock
 
 class RepMedNeXt(nn.Module):
     def __init__(self, 
@@ -22,8 +20,7 @@ class RepMedNeXt(nn.Module):
         block_counts: list = [2,2,2,2,2,2,2,2,2],
         norm_type: str = 'group',
         dim: str = '2d',
-        grn: bool = False,
-        deployed = False
+        grn: bool = False
     ):
         super().__init__()
 
@@ -56,8 +53,7 @@ class RepMedNeXt(nn.Module):
                 do_res=do_res,
                 norm_type=norm_type,
                 dim=dim,
-                grn=grn,
-                deployed=deployed
+                grn=grn
             ) 
             for i in range(block_counts[0])]
         ) 
@@ -83,8 +79,7 @@ class RepMedNeXt(nn.Module):
                 do_res=do_res,
                 norm_type=norm_type,
                 dim=dim,
-                grn=grn,
-                deployed=deployed
+                grn=grn
             )
             for i in range(block_counts[1])]
         )
@@ -110,8 +105,7 @@ class RepMedNeXt(nn.Module):
                 do_res=do_res,
                 norm_type=norm_type,
                 dim=dim,
-                grn=grn,
-                deployed=deployed
+                grn=grn
             )
             for i in range(block_counts[2])]
         )
@@ -137,8 +131,7 @@ class RepMedNeXt(nn.Module):
                 do_res=do_res,
                 norm_type=norm_type,
                 dim=dim,
-                grn=grn,
-                deployed=deployed
+                grn=grn
             )            
             for i in range(block_counts[3])]
         )
@@ -164,8 +157,7 @@ class RepMedNeXt(nn.Module):
                 do_res=do_res,
                 norm_type=norm_type,
                 dim=dim,
-                grn=grn,
-                deployed=deployed
+                grn=grn
             )
             for i in range(block_counts[4])]
         )
@@ -191,8 +183,7 @@ class RepMedNeXt(nn.Module):
                 do_res=do_res,
                 norm_type=norm_type,
                 dim=dim,
-                grn=grn,
-                deployed=deployed
+                grn=grn
             )
             for i in range(block_counts[5])]
         )
@@ -218,8 +209,7 @@ class RepMedNeXt(nn.Module):
                 do_res=do_res,
                 norm_type=norm_type,
                 dim=dim,
-                grn=grn,
-                deployed=deployed
+                grn=grn
             )
             for i in range(block_counts[6])]
         )
@@ -245,8 +235,7 @@ class RepMedNeXt(nn.Module):
                 do_res=do_res,
                 norm_type=norm_type,
                 dim=dim,
-                grn=grn,
-                deployed=deployed
+                grn=grn
             )
             for i in range(block_counts[7])]
         )
@@ -272,8 +261,7 @@ class RepMedNeXt(nn.Module):
                 do_res=do_res,
                 norm_type=norm_type,
                 dim=dim,
-                grn=grn,
-                deployed=deployed
+                grn=grn
             )
             for i in range(block_counts[8])]
         )
